@@ -1,0 +1,11 @@
+{
+  "short_name": "OA Eyes",
+  "name": "OmniArt Eyes Evaluation",
+  "icons": [
+
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
