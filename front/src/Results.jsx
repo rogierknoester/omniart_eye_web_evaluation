@@ -1,6 +1,6 @@
 import React from "react"
 import {observer} from "mobx-react";
-import {Column, Columns, Icon, Subtitle, Title} from "bloomer";
+import {Column, Columns, Icon, Subtitle} from "bloomer";
 import {post_results} from "./api";
 
 class Results extends React.Component {
@@ -21,7 +21,9 @@ class Results extends React.Component {
 
         return <Columns>
             <Column>
-                <Title>Your Results</Title>
+
+                <p>Thanks for participating in this small experiment! Below you can see which of the eyes you marked as
+                    fake are really fake, and which eyes you missed.</p>
 
                 <br/>
 
