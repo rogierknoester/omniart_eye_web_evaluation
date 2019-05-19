@@ -1,12 +1,12 @@
 import sqlite3
 from io import StringIO, BytesIO
 from base64 import b64encode
-import  json
+import json
 import torch
 from PIL import Image
 from flask import Flask, send_file, jsonify, request
 from flask_cors import CORS
-from omniart_eye_dataset import OmniArtEyeDataset
+from omniart_eye_dataset import OmniArtEyeDataset, OA_DATASET_COLOR_25x25
 from omniart_eye_generator import generate_eye, classes, generate_noise, eye_generator
 import random
 import torchvision.transforms as transforms
@@ -19,8 +19,8 @@ def get_encoded_fake_eyes(count):
     eyes = []
     for idx in range(count):
         class_name = random.choice(classes)
-        noise = generate_noise(1)
-        eye = generate_eye(class_name)
+        noise = generate_noise()
+        eye = generate_eye(class_name, noise=noise)
 
         buffered = BytesIO()
         eye.save(buffered, format="JPEG")
@@ -57,7 +57,8 @@ def generate_eyes(count=8):
 
 omniart_eyes = OmniArtEyeDataset(
     transform=transforms.Compose([transforms.Resize((128, 128), interpolation=Image.LANCZOS), transforms.ToTensor(),
-                                  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]))
+                                  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]),
+    dataset_type=OA_DATASET_COLOR_25x25)
 loader = torch.utils.data.DataLoader(omniart_eyes, batch_size=8, shuffle=True, num_workers=1)
 
 
@@ -82,9 +83,26 @@ def sample_for_eval():
 def add_result():
     db = sqlite3.connect('./results.db');
     cursor = db.cursor()
+
+    cursor.execute('''create table if not exists results
+(
+    id          integer
+        constraint results_pk
+            primary key autoincrement,
+    noise       text,
+    deemed_fake integer
+);
+
+''')
+    db.commit()
+
     results = request.get_json()['results']
 
     data = [((json.dumps(eye['noise']), int(eye['deemed_fake']))) for eye in results]
     cursor.executemany('''INSERT INTO results (noise, deemed_fake) VALUES (?, ?)''', data)
     db.commit()
     return ('', 204)
+
+
+if __name__ == '__main__':
+    app.run()

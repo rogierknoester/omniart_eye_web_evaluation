@@ -41,15 +41,20 @@ class App extends React.Component {
                 <Title>Master's Thesis - Eye colour through time</Title>
 
                 {this.routing.current === 'home' && <Home onStartFinished={this.onStart}/>}
-                {this.routing.current === 'home' && this.fake_eyes.map((eye, index) => {
-                    return <img key={index} src={'data:image/jpeg;base64, ' + eye.image} alt={''}/>
-                })}
-                {this.routing.current === 'task' && <Task onFinish={this.onFinishEvaluation} sample={this.evaluation_eyes} phase={'first'}/>}
-                {this.routing.current === 'results' && <Results eyes={this.evaluation_eyes} />}
+                {this.routing.current === 'home' && <div>
 
-                {this.real_eyes.map((eye, index) => {
-                    return <img key={index} src={'data:image/jpeg;base64, ' + eye.image} alt={''}/>
-                })}
+                    <div>
+                    {this.fake_eyes.map((eye, index) => {
+                        return <img key={index} src={'data:image/jpeg;base64, ' + eye.image} alt={''}/>
+                    })}
+                    </div>
+                    <p style={{textAlign: 'center'}}>This is a sample of generated painted eyes. Some might look nothing like an eye, while others look pretty convincing.</p>
+
+                </div>}
+                {this.routing.current === 'task' &&
+                <Task onFinish={this.onFinishEvaluation} sample={this.evaluation_eyes} phase={'first'}/>}
+                {this.routing.current === 'results' && <Results eyes={this.evaluation_eyes}/>}
+
             </Column>
 
         </Columns></Container>;
